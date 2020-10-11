@@ -14,11 +14,7 @@
 #define LED_BLUE 13
 #define POT_LEFT 36
 #define POT_RIGHT 39
-#define MOTOR_IN1 27
-#define MOTOR_IN2 26
-#define MOTOR_ENABLE1 25
-#define MOTOR_ENABLE1_PWM_CHANNEL 1
-#define MOTOR_PWM_FREQUENCY 5000
+#define MOTOR_RELAY 26
 #define MOTOR_STATE_STOPPED 0
 #define MOTOR_STATE_FORWARD 1
 #define MOTOR_STATE_REVERSE -1
@@ -45,8 +41,9 @@ int mode = 0;
 unsigned long lastServoUpdate = 0;
 unsigned long lastMotorUpdate = 0;
 int lastMotorState = 0;
+bool motorOn = false;
 
-void on_blue_button();
+void on_mode_button();
 
 void setup()
 {
@@ -60,13 +57,7 @@ void setup()
   pinMode(LED_BLUE, OUTPUT);
   pinMode(POT_LEFT, INPUT);
   pinMode(POT_RIGHT, INPUT);
-  pinMode(MOTOR_IN1, OUTPUT);
-  pinMode(MOTOR_IN2, OUTPUT);
-  pinMode(MOTOR_ENABLE1, OUTPUT);
-
-  // Setup PWM for the Motor Speed
-  ledcSetup(MOTOR_ENABLE1_PWM_CHANNEL, MOTOR_PWM_FREQUENCY, 12);
-  ledcAttachPin(MOTOR_ENABLE1, MOTOR_ENABLE1_PWM_CHANNEL);
+  pinMode(MOTOR_RELAY, OUTPUT);
 
   // Setup PWM for the Servos
   ledcSetup(SERVO_LOWER_PWM_CHANNEL, SERVO_PWM_FREQUENCY, 12);
@@ -74,12 +65,12 @@ void setup()
   ledcAttachPin(SERVO_LOWER, SERVO_LOWER_PWM_CHANNEL);
   ledcAttachPin(SERVO_UPPER, SERVO_UPPER_PWM_CHANNEL);
 
-  bluebtn.attachClick(on_blue_button);
+  bluebtn.attachClick(on_mode_button);
 
   stepper.setRpm(20);
 }
 
-void on_blue_button()
+void on_mode_button()
 {
   mode = (mode + 1) % 4;
   switch (mode)
@@ -106,52 +97,6 @@ void on_blue_button()
     digitalWrite(LED_GREEN, LOW);
     digitalWrite(LED_BLUE, HIGH);
     break;
-  }
-}
-
-void setMotorSpeed()
-{
-  unsigned long now = millis();
-  if((now - lastMotorUpdate) > UPDATE_DELAY)
-  {
-    int value = analogRead(POT_RIGHT);
-    Serial.println(value);
-    ledcWrite(MOTOR_ENABLE1_PWM_CHANNEL, map(value, 0, 4096, 2048, 4096));
-    lastMotorUpdate = now;
-  }
-}
-
-void driveMotor()
-{
-  if (digitalRead(BUTTON_RED) == HIGH)
-  {
-    if(lastMotorState != MOTOR_STATE_FORWARD)
-    {
-      digitalWrite(MOTOR_IN1, HIGH);
-      digitalWrite(MOTOR_IN2, LOW);
-      lastMotorState = MOTOR_STATE_FORWARD;
-    }
-    setMotorSpeed();
-  }
-  else if (digitalRead(BUTTON_GREEN) == HIGH)
-  {
-    if(lastMotorState != MOTOR_STATE_REVERSE)
-    {
-      digitalWrite(MOTOR_IN1, LOW);
-      digitalWrite(MOTOR_IN2, HIGH);
-      lastMotorState = MOTOR_STATE_REVERSE;
-    }
-    setMotorSpeed();
-  }
-  else
-  {
-    if(lastMotorState != MOTOR_STATE_STOPPED)
-    {
-      digitalWrite(MOTOR_IN1, LOW);
-      digitalWrite(MOTOR_IN2, LOW);
-      ledcWrite(MOTOR_ENABLE1_PWM_CHANNEL, 0);
-      lastMotorState = MOTOR_STATE_STOPPED;
-    }
   }
 }
 
@@ -186,11 +131,23 @@ void loop()
 {
   bluebtn.tick();
 
-  if (mode == MODE_MOTOR)
+  if (mode == MODE_MOTOR && digitalRead(BUTTON_RED) == HIGH)
   {
-    driveMotor();
+    if(!motorOn)
+    {
+      Serial.println("Turning relay on");
+      digitalWrite(MOTOR_RELAY, HIGH);
+      motorOn = true;
+    }
   }
-  else
+  else if(motorOn)
+  {
+    Serial.println("Turning relay off");
+    digitalWrite(MOTOR_RELAY, LOW);
+    motorOn = false;
+  }
+
+  if(mode != MODE_MOTOR)
   {
     driveStepper();
     if (mode == MODE_SERVO_POT)
