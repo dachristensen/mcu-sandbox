@@ -10,7 +10,7 @@
 
 // Wifi info
 #define WIFI_SSID "svoidlan"
-#define WIFI_PASSWORD "daniel.l.christensen"
+#define WIFI_PASSWORD "xxx"
 
 // Connection info
 #define WEBSOCKET_HOST "192.168.0.197"
