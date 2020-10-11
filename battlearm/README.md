@@ -1,6 +1,8 @@
 # Battle Arm
 Code for controlling an arm that rotates on a stepper motor and uses 2 servo's to bend with a spinning saw blade attachment driven by a DC motor.
 
+![Battle Arm Design](docs/battlearm-design.jpg)
+
 ## Parts List
 * 1 x 28BYJ-48 Stepper Motor
 * 1 x ULN2003 Stepper Controller
@@ -15,4 +17,4 @@ Code for controlling an arm that rotates on a stepper motor and uses 2 servo's t
 * 3 x LED
 * 3 x 220 Ohm Resistor
 * 3 x Buttons
-* 3D Printed Parts (Designed in Fusion 360) 
+* 3D Printed Parts (Designed in Fusion 360)
