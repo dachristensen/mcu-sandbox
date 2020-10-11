@@ -1,7 +1,7 @@
 # Battle Arm
 Code for controlling an arm that rotates on a stepper motor and uses 2 servo's to bend with a spinning saw blade attachment driven by a DC motor.
 
-![Battle Arm Design](docs/battlearm-design.jpg)
+![Battle Arm Design](docs/battlearm-design.png)
 
 ## Parts List
 * 1 x 28BYJ-48 Stepper Motor
