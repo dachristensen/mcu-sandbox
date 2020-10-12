@@ -10,11 +10,16 @@ Code for controlling an arm that rotates on a stepper motor and uses 2 servo's t
 * 1 x DC Motor (harvested from an old RC car)
 * 1 x ESP32 Micro Controller (Arduino Compatible)
 * 1 x Relay
-* 2 x 18650 Lipo batteries
+* 2 x 18650 Lithium ion cell
+* 1 x 18650 battery box
 * 1 x NPN Transistor
-* 1 x Diode
+* 1 x 1N4004 Diode
 * 1 x 1K Ohm Resistor
 * 3 x LED
 * 3 x 220 Ohm Resistor
 * 3 x Buttons
+* 2 x 7805 voltage regulator
+* 2 x 0.33 uF ceramic capacitor
+* 2 x 0.11 uF cenamic capacitor
 * 3D Printed Parts (Designed in Fusion 360)
+* Jumper wires
